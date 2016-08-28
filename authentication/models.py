@@ -4,6 +4,7 @@ from django.contrib.auth.models import BaseUserManager
 
 class AccountManager(BaseUserManager):
     def create_user(self, email, password=None, **kwargs):
+        
         if not email:
             raise ValueError('Users must have a valid email address.')
 
@@ -16,7 +17,7 @@ class AccountManager(BaseUserManager):
 
         account.set_password(password)
         account.save()
-
+        
         return account
 
     def create_superuser(self, email, password, **kwargs):
