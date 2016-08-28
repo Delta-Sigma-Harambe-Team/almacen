@@ -24,6 +24,18 @@
     * @desc Register a new user
     * @memberOf thinkster.authentication.controllers.RegisterController
     */
+    activate();
+    /**
+     * @name activate
+     * @desc Actions to be performed when this controller is instantiated
+     * @memberOf thinkster.authentication.controllers.RegisterController
+     */
+    function activate() {
+      // If the user is authenticated, they should not be here.
+      if (Authentication.isAuthenticated()) {
+        $location.url('/');
+      }
+    }
     function register() {
       Authentication.register(vm.email, vm.password, vm.username, vm.confirm_password);
     }

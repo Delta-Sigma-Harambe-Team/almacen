@@ -15,7 +15,6 @@ class LoginView(views.APIView):
 
         email = data.get('email', None)
         password = data.get('password', None)
-
         account = authenticate(email=email, password=password)
 
         if account is not None:
