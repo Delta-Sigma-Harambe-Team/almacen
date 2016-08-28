@@ -1,4 +1,4 @@
-#!/Users/Ruben/Desktop/angular_django/env/bin/python
+#!/Users/Ruben/Desktop/final_Software/env/bin/python
 # EASY-INSTALL-ENTRY-SCRIPT: 'static3==0.5.1','console_scripts','static'
 __requires__ = 'static3==0.5.1'
 import sys
