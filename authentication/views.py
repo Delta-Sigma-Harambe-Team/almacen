@@ -52,12 +52,18 @@ class AccountViewSet(viewsets.ModelViewSet):
 
     def create(self, request):
         serializer = self.serializer_class(data=request.data)
+        if validatePass(request.data):
 
-        if serializer.is_valid() and validatePass(request.data):
-            Account.objects.create_user(**serializer.validated_data)
-            return Response(serializer.validated_data, status=status.HTTP_201_CREATED)
-        #Caso en que no sean iguales las contras no devolvera el error
+            if serializer.is_valid():
+                Account.objects.create_user(**serializer.validated_data)
+                return Response(serializer.validated_data, status=status.HTTP_201_CREATED)
+            
+            return Response({
+                'status': 'Bad request',
+                'messages': serializer.errors
+            }, status=status.HTTP_400_BAD_REQUEST)
         return Response({
-            'status': 'Bad request',
-            'messages': serializer.errors if serializer.errors else {'password':['passwords are not equal.']}
-        }, status=status.HTTP_400_BAD_REQUEST)
+                'status': 'Bad request',
+                'messages':{'password':['passwords are not equal.']}
+            }, status=status.HTTP_400_BAD_REQUEST)
+
