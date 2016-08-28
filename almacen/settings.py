@@ -38,6 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'rest_framework',
     'compressor',
+    'authentication',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -65,7 +66,7 @@ DATABASES = {
         default='sqlite:///' + os.path.join(BASE_DIR, 'db.sqlite3')
     )
 }
-
+AUTH_USER_MODEL = 'authentication.Account'
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
 
