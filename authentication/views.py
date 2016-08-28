@@ -2,7 +2,7 @@ from rest_framework import permissions, viewsets
 
 from authentication.models import Account
 from authentication.permissions import IsAccountOwner
-from authentication.serializers import AccountSerializer
+from authentication.serializers import AccountSerializer, validatePass
 
 import json
 from django.contrib.auth import authenticate, login
@@ -52,12 +52,12 @@ class AccountViewSet(viewsets.ModelViewSet):
 
     def create(self, request):
         serializer = self.serializer_class(data=request.data)
-        
-        if serializer.is_valid():
+
+        if serializer.is_valid() and validatePass(request.data):
             Account.objects.create_user(**serializer.validated_data)
             return Response(serializer.validated_data, status=status.HTTP_201_CREATED)
-
+        #Caso en que no sean iguales las contras no devolvera el error
         return Response({
             'status': 'Bad request',
-            'messages': serializer.errors
+            'messages': serializer.errors if serializer.errors else {'password':['passwords are not equal.']}
         }, status=status.HTTP_400_BAD_REQUEST)

@@ -25,13 +25,15 @@ class AccountSerializer(serializers.ModelSerializer):
 
             instance.save()
 
-            password = validated_data.get('password', None)
-            confirm_password = validated_data.get('confirm_password', None)
-
-            if password and confirm_password and password == confirm_password:
+            if validatePass(validated_data):
                 instance.set_password(password)
                 instance.save()
 
             update_session_auth_hash(self.context.get('request'), instance)
 
             return instance
+    
+def validatePass(data):
+    password = data.get('password', None)
+    confirm_password = data.get('confirm_password', None)
+    return password and confirm_password and password == confirm_password
