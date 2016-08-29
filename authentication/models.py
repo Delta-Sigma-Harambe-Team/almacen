@@ -46,6 +46,22 @@ class Account(AbstractBaseUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
 
+    @property
+    def is_superuser(self):
+        return self.is_admin
+
+    @property
+    def is_staff(self):
+        return self.is_admin
+    
+    def has_perm(self, perm, obj=None):
+        print perm
+        return self.is_admin
+
+    def has_module_perms(self, app_label):
+        print app_label
+        return self.is_admin
+    
     def __unicode__(self):
         return self.email
 
