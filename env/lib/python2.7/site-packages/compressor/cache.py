@@ -3,12 +3,12 @@ import hashlib
 import os
 import socket
 import time
+from importlib import import_module
 
-from django.core.cache import get_cache
+from django.core.cache import caches
 from django.core.files.base import ContentFile
 from django.utils.encoding import force_text, smart_bytes
 from django.utils.functional import SimpleLazyObject
-from django.utils.importlib import import_module
 
 from compressor.conf import settings
 from compressor.storage import default_storage
@@ -39,7 +39,7 @@ def get_cachekey(*args, **kwargs):
             mod_name, func_name = get_mod_func(
                 settings.COMPRESS_CACHE_KEY_FUNCTION)
             _cachekey_func = getattr(import_module(mod_name), func_name)
-        except (AttributeError, ImportError) as e:
+        except (AttributeError, ImportError, TypeError) as e:
             raise ImportError("Couldn't import cache key function %s: %s" %
                               (settings.COMPRESS_CACHE_KEY_FUNCTION, e))
     return _cachekey_func(*args, **kwargs)
@@ -125,6 +125,10 @@ def get_hashed_content(filename, length=12):
         return get_hexdigest(file.read(), length)
 
 
+def get_precompiler_cachekey(command, contents):
+    return hashlib.sha1(smart_bytes('precompiler.%s.%s' % (command, contents))).hexdigest()
+
+
 def cache_get(key):
     packed_val = cache.get(key)
     if packed_val is None:
@@ -148,4 +152,4 @@ def cache_set(key, val, refreshed=False, timeout=None):
     return cache.set(key, packed_val, real_timeout)
 
 
-cache = SimpleLazyObject(lambda: get_cache(settings.COMPRESS_CACHE_BACKEND))
+cache = SimpleLazyObject(lambda: caches[settings.COMPRESS_CACHE_BACKEND])

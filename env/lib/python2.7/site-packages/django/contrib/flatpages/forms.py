@@ -8,8 +8,11 @@ class FlatpageForm(forms.ModelForm):
     url = forms.RegexField(label=_("URL"), max_length=100, regex=r'^[-\w/\.~]+$',
         help_text=_("Example: '/about/contact/'. Make sure to have leading"
                     " and trailing slashes."),
-        error_message=_("This value must contain only letters, numbers,"
-                        " dots, underscores, dashes, slashes or tildes."))
+        error_messages={
+            "invalid": _("This value must contain only letters, numbers,"
+                         " dots, underscores, dashes, slashes or tildes."),
+        },
+    )
 
     class Meta:
         model = FlatPage
@@ -32,8 +35,8 @@ class FlatpageForm(forms.ModelForm):
         return url
 
     def clean(self):
-        url = self.cleaned_data.get('url', None)
-        sites = self.cleaned_data.get('sites', None)
+        url = self.cleaned_data.get('url')
+        sites = self.cleaned_data.get('sites')
 
         same_url = FlatPage.objects.filter(url=url)
         if self.instance.pk:

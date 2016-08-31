@@ -13,26 +13,26 @@ from compressor.conf import settings
 from compressor.signals import post_compress
 from compressor.tests.test_base import css_tag, test_dir
 
+from sekizai.context import SekizaiContext
 
-def render(template_string, context_dict=None):
+
+def render(template_string, context_dict=None, context=None):
     """
     A shortcut for testing template output.
     """
     if context_dict is None:
         context_dict = {}
-    c = Context(context_dict)
+    if context is None:
+        context = Context
+    c = context(context_dict)
     t = Template(template_string)
     return t.render(c).strip()
 
 
+@override_settings(COMPRESS_ENABLED=True)
 class TemplatetagTestCase(TestCase):
     def setUp(self):
-        self.old_enabled = settings.COMPRESS_ENABLED
-        settings.COMPRESS_ENABLED = True
         self.context = {'STATIC_URL': settings.COMPRESS_URL}
-
-    def tearDown(self):
-        settings.COMPRESS_ENABLED = self.old_enabled
 
     def test_empty_tag(self):
         template = """{% load compress %}{% compress js %}{% block js %}
@@ -130,25 +130,34 @@ class TemplatetagTestCase(TestCase):
         context = kwargs['context']
         self.assertEqual('foo', context['compressed']['name'])
 
+    def test_sekizai_only_once(self):
+        template = """{% load sekizai_tags %}{% addtoblock "js" %}
+        <script type="text/javascript">var tmpl="{% templatetag openblock %} if x == 3 %}x IS 3{% templatetag openblock %} endif %}"</script>
+        {% endaddtoblock %}{% render_block "js" postprocessor "compressor.contrib.sekizai.compress" %}
+        """
+        out = '<script type="text/javascript" src="/static/CACHE/js/e9fce10d884d.js"></script>'
+        self.assertEqual(out, render(template, self.context, SekizaiContext))
+
 
 class PrecompilerTemplatetagTestCase(TestCase):
     def setUp(self):
-        self.old_enabled = settings.COMPRESS_ENABLED
-        self.old_precompilers = settings.COMPRESS_PRECOMPILERS
-
         precompiler = os.path.join(test_dir, 'precompiler.py')
         python = sys.executable
 
-        settings.COMPRESS_ENABLED = True
-        settings.COMPRESS_PRECOMPILERS = (
-            ('text/coffeescript', '%s %s' % (python, precompiler)),
-            ('text/less', '%s %s' % (python, precompiler)),
-        )
+        override_settings = {
+            'COMPRESS_ENABLED': True,
+            'COMPRESS_PRECOMPILERS': (
+                ('text/coffeescript', '%s %s' % (python, precompiler)),
+                ('text/less', '%s %s' % (python, precompiler)),
+            )
+        }
+        self.override_settings = self.settings(**override_settings)
+        self.override_settings.__enter__()
+
         self.context = {'STATIC_URL': settings.COMPRESS_URL}
 
     def tearDown(self):
-        settings.COMPRESS_ENABLED = self.old_enabled
-        settings.COMPRESS_PRECOMPILERS = self.old_precompilers
+        self.override_settings.__exit__(None, None, None)
 
     def test_compress_coffeescript_tag(self):
         template = """{% load compress %}{% compress js %}

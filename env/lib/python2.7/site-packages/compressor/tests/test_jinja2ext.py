@@ -2,16 +2,17 @@
 from __future__ import with_statement, unicode_literals
 
 import sys
+import unittest
 
 from django.test import TestCase
-from django.utils import unittest, six
+from django.utils import six
 from django.test.utils import override_settings
 
 from compressor.conf import settings
 from compressor.tests.test_base import css_tag
 
 
-@unittest.skipUnless(not six.PY3 or sys.version_info[:2] >= (3, 3),
+@unittest.skipIf(six.PY3 and sys.version_info[:2] < (3, 3),
                      'Jinja can only run on Python < 3 and >= 3.3')
 class TestJinja2CompressorExtension(TestCase):
     """
@@ -65,8 +66,7 @@ class TestJinja2CompressorExtension(TestCase):
         self.assertEqual(tag_body, template.render())
 
     def test_empty_tag(self):
-        template = self.env.from_string("""{% compress js %}{% block js %}
-        {% endblock %}{% endcompress %}""")
+        template = self.env.from_string("""{% compress js %}{% block js %}{% endblock %}{% endcompress %}""")
         context = {'STATIC_URL': settings.COMPRESS_URL}
         self.assertEqual('', template.render(context))
 
@@ -144,13 +144,11 @@ class TestJinja2CompressorExtension(TestCase):
         self.assertEqual(out, template.render(context))
 
     def test_nonascii_inline_css(self):
-        org_COMPRESS_ENABLED = settings.COMPRESS_ENABLED
-        settings.COMPRESS_ENABLED = False
-        template = self.env.from_string('{% compress css %}'
-                                        '<style type="text/css">'
-                                        '/* русский текст */'
-                                        '</style>{% endcompress %}')
+        with self.settings(COMPRESS_ENABLED=False):
+            template = self.env.from_string('{% compress css %}'
+                                            '<style type="text/css">'
+                                            '/* русский текст */'
+                                            '</style>{% endcompress %}')
         out = '<link rel="stylesheet" href="/static/CACHE/css/b2cec0f8cb24.css" type="text/css" />'
-        settings.COMPRESS_ENABLED = org_COMPRESS_ENABLED
         context = {'STATIC_URL': settings.COMPRESS_URL}
         self.assertEqual(out, template.render(context))
