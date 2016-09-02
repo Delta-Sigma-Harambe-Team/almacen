@@ -27,8 +27,9 @@
     * @desc Actions to be performed when this controller is instantiated
     * @memberOf thinkster.layout.controllers.IndexController
     */
-    function activate() {
-      Posts.all().then(postsSuccessFn, postsErrorFn);
+    function activate() 
+    {
+      if (vm.isAuthenticated) { Posts.all().then(postsSuccessFn, postsErrorFn);}
 
       $scope.$on('post.created', function (event, post) {
         vm.posts.unshift(post);
@@ -43,7 +44,8 @@
       * @name postsSuccessFn
       * @desc Update posts array on view
       */
-      function postsSuccessFn(data, status, headers, config) {
+      function postsSuccessFn(data, status, headers, config) 
+      {
         vm.posts = data.data;
       }
 
@@ -52,7 +54,8 @@
       * @name postsErrorFn
       * @desc Show snackbar with error
       */
-      function postsErrorFn(data, status, headers, config) {
+      function postsErrorFn(data, status, headers, config) 
+      {
         Snackbar.error(data.error);
       }
     }
