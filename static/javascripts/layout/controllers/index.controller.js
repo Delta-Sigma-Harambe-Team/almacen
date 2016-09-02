@@ -29,7 +29,10 @@
     */
     function activate() 
     {
-      if (vm.isAuthenticated) { Posts.all().then(postsSuccessFn, postsErrorFn);}
+      if (vm.isAuthenticated||1) 
+      { 
+        Posts.all().then(postsSuccessFn, postsErrorFn);
+      }
 
       $scope.$on('post.created', function (event, post) {
         vm.posts.unshift(post);

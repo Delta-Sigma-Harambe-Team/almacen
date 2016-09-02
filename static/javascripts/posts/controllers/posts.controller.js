@@ -72,7 +72,8 @@
       * @returns The approximately normalized height of a given column
       */
       function columnMapFn(column) {
-        var lengths = column.map(function (element) {
+        var lengths = column.map(function (element)
+        {
           return element.content.length;
         });
 

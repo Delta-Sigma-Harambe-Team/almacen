@@ -9,12 +9,12 @@ class PostViewSet(viewsets.ModelViewSet):
     serializer_class = PostSerializer
 
     def get_permissions(self):
-        #if self.request.method in permissions.SAFE_METHODS: return (permissions.AllowAny(),)
+        if self.request.method in permissions.SAFE_METHODS: 
+            return (permissions.AllowAny(),)
         return (permissions.IsAuthenticated(), IsAuthorOfPost(),)
 
-    def get_queryset(self):                                 #Fixed para que solo los del logeado
-        return Post.objects.filter(author=self.request.user)
-    
+    #def get_queryset(self):   #Fixed para que solo los del logeado
+    #    return Post.objects.filter(author=self.request.user) 
     def perform_create(self, serializer):
         instance = serializer.save(author=self.request.user)
         return super(PostViewSet, self).perform_create(serializer)
@@ -24,7 +24,7 @@ class AccountPostsViewSet(viewsets.ViewSet):
     serializer_class = PostSerializer
 
     def list(self, request, account_username=None):
+        print request
         queryset = self.queryset.filter(author__username=account_username)
         serializer = self.serializer_class(queryset, many=True)
-        print request
         return Response(serializer.data)
