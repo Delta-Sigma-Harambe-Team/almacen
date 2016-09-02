@@ -2,7 +2,7 @@ from rest_framework import permissions, viewsets
 
 from authentication.models import Account
 from authentication.permissions import IsAccountOwner
-from authentication.serializers import AccountSerializer, validatePass
+from authentication.serializers import AccountSerializer
 
 import json
 from django.contrib.auth import authenticate, login
@@ -55,10 +55,12 @@ class AccountViewSet(viewsets.ModelViewSet):
             return (permissions.AllowAny(),)
 
         return (permissions.IsAuthenticated(), IsAccountOwner(),)
-
+    
     def create(self, request):
         serializer = self.serializer_class(data=request.data)
-        if validatePass(request.data):
+        print request.data
+        print type(request.data)
+        if serializer.validatePass(request.data):
 
             if serializer.is_valid():
                 Account.objects.create_user(**serializer.validated_data)

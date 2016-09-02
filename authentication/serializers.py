@@ -16,24 +16,20 @@ class AccountSerializer(serializers.ModelSerializer):
                   'confirm_password',)# 'tagline', 
         read_only_fields = ('created_at', 'updated_at',)
 
-        def create(self, validated_data):
-            return Account.objects.create(**validated_data)
-
-        def update(self, instance, validated_data):
-            instance.username = validated_data.get('username', instance.username)
-            #instance.tagline = validated_data.get('tagline', instance.tagline)
-
+    def create(self, validated_data):
+        return Account.objects.create(**validated_data)
+    def update(self, instance, validated_data):
+        instance.first_name = validated_data.get('first_name',instance.first_name)
+        instance.last_name = validated_data.get('last_name',instance.last_name)
+        instance.username = validated_data.get('username', instance.username)
+        instance.save()
+        if self.validatePass(validated_data):
+            instance.set_password(validated_data.get('password'))
             instance.save()
-
-            if validatePass(validated_data):
-                instance.set_password(password)
-                instance.save()
-
-            update_session_auth_hash(self.context.get('request'), instance)
-
-            return instance
+        update_session_auth_hash(self.context.get('request'), instance)
+        return instance
     
-def validatePass(data):
-    password = data.get('password', None)
-    confirm_password = data.get('confirm_password', None)
-    return password and confirm_password and password == confirm_password
+    def validatePass(self,data):
+        password = data.get('password', None)
+        confirm_password = data.get('confirm_password', None)
+        return password and confirm_password and password == confirm_password
