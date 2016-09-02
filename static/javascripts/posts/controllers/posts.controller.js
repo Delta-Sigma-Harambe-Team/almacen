@@ -27,7 +27,8 @@
     * @desc Actions to be performed when this controller is instantiated
     * @memberOf thinkster.posts.controllers.PostsController
     */
-    function activate() {
+    function activate() 
+    {
       $scope.$watchCollection(function () { return $scope.posts; }, render);
       $scope.$watch(function () { return $(window).width(); }, render);
     }
