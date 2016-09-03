@@ -22,17 +22,19 @@
 <script>
     // Enable pusher logging - don't include this in production
     Pusher.logToConsole = true;
-
-    var pusher = new Pusher('5b507c0f890e03302c2c', 
+    var pusher = new Pusher('5b507c0f890e03302c2c',{encrypted: true});
+    var channel = pusher.subscribe('channel_almacen');
+    channel.bind('new_petition', function(data) 
     {
-      encrypted: true
-    });
-
-    var channel = pusher.subscribe('test_channel');
-    channel.bind('my_event', function(data) {
-      alert(data.message);
+      var x;
+      if (confirm("Nuevo Pedido: "+data.message)==true) 
+      {
+        console.log('OK');
+      } else 
+      {
+        console.log('NO OK');
+      }
     });
   </script>
-
 </body>
 </html>
