@@ -9,16 +9,18 @@
     .module('thinkster.layout.controllers')
     .controller('IndexController', IndexController);
 
-  IndexController.$inject = ['$scope', 'Authentication', 'Posts', 'Snackbar'];
+  IndexController.$inject = ['$scope','$pusher','Authentication', 'Posts', 'Snackbar'];
 
   /**
   * @namespace IndexController
   */
-  function IndexController($scope, Authentication, Posts, Snackbar) {
+  function IndexController($scope, $pusher, Authentication, Posts, Snackbar) {
     var vm = this;
-
     vm.isAuthenticated = Authentication.isAuthenticated();
     vm.posts = [];
+
+    //Seteamos el pusher global
+    window.client = new Pusher('5b507c0f890e03302c2c',{encrypted: true});
 
     activate();
 
@@ -29,7 +31,14 @@
     */
     function activate() 
     {
-      if (vm.isAuthenticated||1) 
+      var my_channel = $pusher(client).subscribe('channel_almacen');
+      my_channel.bind('new_petition',function(data) 
+        {
+          Snackbar.show('Nueva peticion de '+data.message);
+        }
+      );
+
+      if (vm.isAuthenticated||1)  //Si queremos ver los posts aun NO authenticated
       { 
         Posts.all().then(postsSuccessFn, postsErrorFn);
       }

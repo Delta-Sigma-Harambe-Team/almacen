@@ -1,6 +1,5 @@
 {% load compress %}
 {% load staticfiles %}
-<script src="https://js.pusher.com/3.2/pusher.min.js"></script>
 {% compress js %}
 <script type="text/javascript" src="{% static 'bower_components/jquery/dist/jquery.js' %}"></script>
 <script type="text/javascript" src="{% static 'bower_components/bootstrap/dist/js/bootstrap.js' %}"></script>
@@ -39,3 +38,6 @@
 <script type="text/javascript" src="{% static 'javascripts/profiles/controllers/profiles.controller.js' %}"></script>
 <script type="text/javascript" src="{% static 'javascripts/profiles/controllers/profile-settings.controller.js' %}"></script>
 {% endcompress %}
+<script src="https://js.pusher.com/3.2/pusher.min.js"></script>
+<script src="//cdn.jsdelivr.net/angular.pusher/latest/pusher-angular.min.js"></script>
+

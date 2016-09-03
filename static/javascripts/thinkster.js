@@ -9,7 +9,8 @@
       'thinkster.layout',
       'thinkster.posts',
       'thinkster.utils',
-      'thinkster.profiles'
+      'thinkster.profiles',
+      'pusher-angular'
     ]);
 
   angular
