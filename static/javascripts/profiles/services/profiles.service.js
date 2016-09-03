@@ -60,8 +60,9 @@
     * @returns {Promise}
     * @memberOf thinkster.profiles.services.Profile
     */
-    function update(profile) {
-      return $http.put('/api/v1/accounts/' + profile.username + '/', profile);
+    function update(username,profile) //Username since we can change it
+    {
+      return $http.put('/api/v1/accounts/' + username + '/', profile);
     }
   }
 })();

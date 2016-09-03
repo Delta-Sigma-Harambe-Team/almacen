@@ -20,8 +20,8 @@
     vm.destroy = destroy;
     vm.update = update;
 
+    vm.current_u = Authentication.getAuthenticatedAccount().username
     activate();
-
 
     /**
     * @name activate
@@ -104,15 +104,19 @@
     * @desc Update this user's profile
     * @memberOf thinkster.profiles.controllers.ProfileSettingsController
     */
-    function update() {
-      Profile.update(vm.profile).then(profileSuccessFn, profileErrorFn);
+    function update() 
+    {
+      Profile.update(vm.current_u,vm.profile).then(profileSuccessFn, profileErrorFn);
 
       /**
       * @name profileSuccessFn
       * @desc Show success snackbar
       */
-      function profileSuccessFn(data, status, headers, config) {
+      function profileSuccessFn(data, status, headers, config) 
+      {
         Snackbar.show('Your profile has been updated.');
+        if(data.data.username!=vm.current_u)//Deberia reLogearAuto
+          Authentication.logout();
       }
 
 
@@ -120,7 +124,8 @@
       * @name profileErrorFn
       * @desc Show error snackbar
       */
-      function profileErrorFn(data, status, headers, config) {
+      function profileErrorFn(data, status, headers, config) 
+      {
         Snackbar.error(data.error);
       }
     }
