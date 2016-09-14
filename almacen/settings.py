@@ -131,11 +131,3 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Allow all host headers
 ALLOWED_HOSTS = ['*']
-
-'''
-from pusher import Pusher
-
-Pusher(app_id='244790',key='5b507c0f890e03302c2c',secret='990ad909a2a0fb83e15c',ssl=True).\
-trigger('channel_almacen', 'new_petition', {'message': 'Restaurante 31'})
-'''
-
