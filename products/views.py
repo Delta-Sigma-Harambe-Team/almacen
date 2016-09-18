@@ -8,7 +8,7 @@ class ResourceViewSet(viewsets.ModelViewSet):
     serializer_class = ResourceSerializer
 
     def get_permissions(self):
-        #if self.request.method in permissions.SAFE_METHODS: return (permissions.AllowAny(),)
+        if self.request.method in permissions.SAFE_METHODS: return (permissions.AllowAny(),)
         return (permissions.IsAuthenticated(),)
 
     def perform_create(self, serializer):
