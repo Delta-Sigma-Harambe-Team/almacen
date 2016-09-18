@@ -13,11 +13,12 @@ class OrderItemSerializer(serializers.HyperlinkedModelSerializer):
 
 class OrderSerializer(serializers.ModelSerializer):
     items = OrderItemSerializer(source='orderitem_set',many=True)
-
+    status = serializers.CharField(source='get_status_display', read_only=True)
+    
     class Meta:
         model = Order
-        fields = ('requester', 'items') #depth = 1
+        fields = ('requester','status','items') #depth = 1
         
     def get_validation_exclusions(self, *args, **kwargs):
         exclusions = super(ResourceSerializer, self).get_validation_exclusions()
-        return exclusions #+ ['author']
+        return exclusions 

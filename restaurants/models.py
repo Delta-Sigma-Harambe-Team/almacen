@@ -3,6 +3,9 @@ import uuid
 from django.db import models
 from products.models import Resource
 
+PEND,DONE,REJ = 0,1,2
+STATUS_CHOICES = ((PEND, "Pending"),(DONE, "Delivered"),(REJ, "Rejected"))  
+
 # Create your models here.
 class Restaurant(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -22,6 +25,7 @@ class Order(models.Model):
     requester = models.ForeignKey(Restaurant)
     item = models.ManyToManyField(Resource, through='OrderItem',blank=False)
 
+    status = models.IntegerField(choices=STATUS_CHOICES,default=PEND)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

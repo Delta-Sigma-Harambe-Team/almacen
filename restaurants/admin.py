@@ -12,7 +12,7 @@ class AdminRestaurant(admin.ModelAdmin):
 
 @admin.register(Order)
 class AdminOrder(admin.ModelAdmin):
-    list_display = ('requester', 'created_at','updated_at')
+    list_display = ('requester','status' ,'created_at','updated_at')
     list_filter = ('requester',)
     inlines = (TermInlineAdmin,)
 

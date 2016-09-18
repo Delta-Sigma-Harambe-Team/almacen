@@ -11,3 +11,8 @@ class ResourceSerializer(serializers.ModelSerializer):
     def get_validation_exclusions(self, *args, **kwargs):
         exclusions = super(ResourceSerializer, self).get_validation_exclusions()
         return exclusions #+ ['author']
+
+    def validate(self, data):
+    	if data['due_date'] < data['created_at']:
+            raise serializers.ValidationError("Due date can't be before today")
+    	return data
