@@ -1,5 +1,3 @@
-# thinkster-django-angular-boilerplate
-
 ## Installation
 ### Project started based on git@github.com:<your username>/thinkster-django-angular-boilerplate.git`
 
@@ -9,6 +7,7 @@
 
 You have to create a virtualenv and then:
 
+* `$ pip install -U pip`
 * `$ pip install -r requirements.txt`
 * `$ npm install -g bower`
 * `$ npm install`
