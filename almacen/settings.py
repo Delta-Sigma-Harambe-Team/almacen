@@ -43,6 +43,7 @@ INSTALLED_APPS = (
     'authentication',
     'posts',
     'products',
+    'restaurants',
 )
 
 MIDDLEWARE_CLASSES = (
