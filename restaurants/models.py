@@ -20,15 +20,19 @@ class Restaurant(models.Model):
 
 class Order(models.Model):
     requester = models.ForeignKey(Restaurant)
-    item = models.ManyToManyField(Resource, through='OrderItem')
+    item = models.ManyToManyField(Resource, through='OrderItem',blank=False)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
-        return '{0}'.format(self.requester)
+        return '%s from %s'%(self.requester,self.created_at)
 
 class OrderItem(models.Model):
-    order = models.ForeignKey(Order)
-    item = models.ForeignKey(Resource)
+    order = models.ForeignKey(Order,null=False,blank=False)
+    item = models.ForeignKey(Resource,null=False,blank=False)
     amount = models.DecimalField(max_digits = 10, decimal_places=2, blank=False,verbose_name='Cantidad en gramos')
+
+    def __unicode__(self):
+        return '%s %s %s'.format(self.order,self.item, self.amount)
+

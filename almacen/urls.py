@@ -8,7 +8,8 @@ urlpatterns = [
 
     url(r'^', include('authentication.urls', namespace='auth')),
     url(r'^', include('posts.urls', namespace='posts')),
-	url(r'^', include('products.urls', namespace='products')),     
+	url(r'^', include('products.urls', namespace='products')), 
+	url(r'^', include('restaurants.urls', namespace='orders')),     
 
     url('^.*$', IndexView.as_view(), name='index'),
 ]
