@@ -38,5 +38,5 @@ class OrderItem(models.Model):
     amount = models.DecimalField(max_digits = 10, decimal_places=2, blank=False,verbose_name='Cantidad en gramos')
 
     def __unicode__(self):
-        return '%s %s %s'.format(self.order,self.item, self.amount)
+        return '%s %s %s'%(self.order,self.item, self.amount)
 

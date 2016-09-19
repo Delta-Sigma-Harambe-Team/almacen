@@ -2,11 +2,19 @@ from rest_framework import serializers
 from authentication.serializers import *
 from .models import Order, OrderItem
 from products.models import Resource
-from products.serializers import ResourceSerializer
 
+class ProductSerializer(serializers.ModelSerializer): #Only read
+    class Meta:
+        model = Resource
+        fields = ('id', 'name', 'amount', 'price','due_date')
+        read_only_fields = ('created_at', 'updated_at','name', 'amount', 'price','due_date')
+
+    def get_validation_exclusions(self, *args, **kwargs):
+        exclusions = super(ResourceSerializer, self).get_validation_exclusions()
+        return exclusions #+ ['author']
 
 class OrderItemSerializer(serializers.HyperlinkedModelSerializer):
-    item = ResourceSerializer()
+    item = ProductSerializer()
     class Meta:
         model = OrderItem
         fields = ('amount','item')

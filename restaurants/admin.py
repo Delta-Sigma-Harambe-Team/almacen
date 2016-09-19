@@ -16,9 +16,7 @@ class AdminOrder(admin.ModelAdmin):
     list_filter = ('requester',)
     inlines = (TermInlineAdmin,)
 
-'''
 @admin.register(OrderItem)
 class AdminOrderItem(admin.ModelAdmin):
     list_display = ('order', 'item','amount')
     list_filter = ('order','amount')
-'''

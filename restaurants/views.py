@@ -1,7 +1,8 @@
 from rest_framework import permissions, viewsets
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
-from .models import Order
+from .models import *
+from products.models import Resource
 from .serializers import OrderSerializer
 
 class OrderViewSet(viewsets.ModelViewSet):
@@ -24,24 +25,39 @@ class OrderViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request):
-        items = request.data['items']
-        restaurant = request.data['requester']
-        
-        
-        print items
-        print restaurant
+        restaurant = get_object_or_404(Restaurant,pk=request.data['requester'])
+        order = Order.objects.create(requester=restaurant)
+        try:
+            for i in request.data['items']:
+                item = Resource.objects.get( id=i['item']['id'] )
+                oi = OrderItem(order=order,amount=i['amount'],item=item) 
+                oi.save()   
+        except:
+            order.delete()
+            return Response({'msg':'Could not find some requested items, try again'})
 
-        return Response({"msg":"test Post"})
-
-''' #JSON EXAMPLE FOR POST
+        serializer = self.serializer_class(order)
+        return Response(serializer.data)
+            
+''' #JSON EXAMPLE FOR CREATE -> POST
 {
-        "requester": "00287b5d-4d22-4ef5-8918-2551bf3b2efe",
-        "status": "Pending",
-        "items": [
+    "requester": "00287b5d-4d22-4ef5-8918-2551bf3b2efe",
+    "items": [
+        {
+            "amount": "1000.00",
+            "item": 
             {
-                "amount": "400.00",
-                "item": {"id": 4}
+                "id": 4
             }
-        ]
+        },
+        {
+            "amount": "10.00",
+            "item": 
+            {
+                "id": 1
+            }
+        }
+
+    ]
 }
 '''
