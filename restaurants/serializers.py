@@ -7,7 +7,7 @@ class ProductSerializer(serializers.ModelSerializer): #Only read
     class Meta:
         model = Resource
         fields = ('id', 'name', 'amount', 'price','due_date')
-        read_only_fields = ('created_at', 'updated_at','name', 'amount', 'price','due_date')
+        read_only_fields = ('id','created_at', 'updated_at','name', 'amount', 'price','due_date')
 
     def get_validation_exclusions(self, *args, **kwargs):
         exclusions = super(ResourceSerializer, self).get_validation_exclusions()
@@ -25,7 +25,7 @@ class OrderSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Order
-        fields = ('requester','status','items') #depth = 1
+        fields = ('id','requester','status','items') #depth = 1
         
     def get_validation_exclusions(self, *args, **kwargs):
         exclusions = super(ResourceSerializer, self).get_validation_exclusions()

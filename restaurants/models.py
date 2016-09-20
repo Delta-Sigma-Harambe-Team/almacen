@@ -5,7 +5,7 @@ from products.models import Resource
 
 PEND,DONE,REJ = 0,1,2
 STATUS_CHOICES = ((PEND, "Pending"),(DONE, "Delivered"),(REJ, "Rejected"))  
-
+STATUS_CODES = {"Pending":PEND,'Delivered':DONE,"Rejected":REJ}
 # Create your models here.
 class Restaurant(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -25,6 +25,7 @@ class Order(models.Model):
     requester = models.ForeignKey(Restaurant)
     item = models.ManyToManyField(Resource, through='OrderItem',blank=False)
 
+    #amount = models.DecimalField(max_digits = 30,decimal_places=2,default=0.0)
     status = models.IntegerField(choices=STATUS_CHOICES,default=PEND)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

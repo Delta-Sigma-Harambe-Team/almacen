@@ -23,13 +23,7 @@ class OrderViewSet(viewsets.ModelViewSet):
         instance = serializer.save() #author=self.request.user)
         return super(OrderViewSet, self).perform_create(serializer)
 
-    def retrieve(self, request, pk=None):
-        queryset =  self.queryset.filter(requester__id=pk)
-        result = get_object_or_404(queryset)
-        serializer = self.serializer_class(result)
-        return Response(serializer.data)
-
-    def create(self, request): #Este es en /orders/
+    def create(self, request): #Este es en /orders/ POST
         restaurant = get_object_or_404(Restaurant,pk=request.data['requester'])
         order = Order.objects.create(requester=restaurant)
         try:
@@ -44,6 +38,30 @@ class OrderViewSet(viewsets.ModelViewSet):
         serializer = self.serializer_class(order)
         send_push_notification(restaurant.name)
         return Response(serializer.data)
+
+    def partial_update(self, request, pk=None): #Que solo sirva para cambiar el estado de la orden
+        order = get_object_or_404(Order,pk=pk)
+        
+        #Si La moveremos a Done checar que todo se pueda y restar         
+        if order.status != DONE and STATUS_CODES[request.data['status']]==DONE:
+            possible = True
+            for oi in OrderItem.objects.filter(order=order): possible&=oi.amount<=oi.item.amount
+            if possible: #Prev was to check that we can pass it
+                order.statis = DONE
+                for oi in OrderItem.objects.filter(order=order): 
+                    #Aqui deberia de restar amount del almacen
+                    print oi.item
+
+            else:
+                return Response({'msg':"Couldn't complete requested amounts"})
+
+        serializer = self.serializer_class(order)
+        return Response(serializer.data)
+
+    def update(self, request, pk=None):
+        return Response({'msg':"Can't POST here "})
+
+
             
 ''' #JSON EXAMPLE FOR CREATE -> POST
 {
