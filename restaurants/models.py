@@ -2,6 +2,10 @@ from __future__ import unicode_literals
 import uuid
 from django.db import models
 from products.models import Resource
+from django.db.models.signals import post_save, post_delete , pre_save
+from django.dispatch import receiver
+from django.contrib.admin.models import LogEntry
+from decimal import Decimal
 
 PEND,DONE,REJ = 0,1,2
 STATUS_CHOICES = ((PEND, "Pending"),(DONE, "Delivered"),(REJ, "Rejected"))  
@@ -40,4 +44,19 @@ class OrderItem(models.Model):
 
     def __unicode__(self):
         return '%s %s %s'%(self.order,self.item, self.amount)
+
+#FALTA CUANDO SE HACE UN UPDATE DE AMOUNT
+@receiver(post_save,sender=OrderItem) 
+def AfterSave_OrderItem(sender, instance, *args, **kwargs):
+    if kwargs['created']:
+        instance.order.amount = float(instance.order.amount)+(float(instance.amount)*float(instance.item.price)/float(1000.0))
+        instance.order.save()
+
+@receiver(post_delete,sender=OrderItem) 
+def AfterDelete_OrderItem(sender, instance, *args, **kwargs):
+    instance.order.amount = float(instance.order.amount)-(float(instance.amount)*float(instance.item.price)/float(1000.0))
+    instance.order.save()
+
+
+
 

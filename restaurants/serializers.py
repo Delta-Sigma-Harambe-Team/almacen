@@ -26,7 +26,8 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = ('id','requester','status','amount','items') #depth = 1
-        
+        read_only_fields= ('amount',)
+
     def get_validation_exclusions(self, *args, **kwargs):
         exclusions = super(ResourceSerializer, self).get_validation_exclusions()
         return exclusions 

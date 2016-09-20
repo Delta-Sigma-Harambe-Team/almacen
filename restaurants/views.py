@@ -5,7 +5,6 @@ from .models import *
 from products.models import Resource
 from .serializers import OrderSerializer
 from pusher import Pusher
-from decimal import Decimal
 
 def send_push_notification(message,channel='channel_almacen',event='new_petition'):
     Pusher(app_id='244790',key='5b507c0f890e03302c2c',secret='990ad909a2a0fb83e15c',ssl=True).\
@@ -28,14 +27,10 @@ class OrderViewSet(viewsets.ModelViewSet):
         restaurant = get_object_or_404(Restaurant,pk=request.data['requester'])
         order = Order.objects.create(requester=restaurant)
         try:
-            total = 0
             for i in request.data['items']:
                 item = Resource.objects.get( id=i['item']['id'] )
                 oi = OrderItem(order=order,amount=i['amount'],item=item) 
-                total+= Decimal(i['amount'])* oi.item.price/Decimal(1000.00)
                 oi.save()
-            order.amount = total
-            order.save() 
         except Exception as e:
             order.delete()
             print 'ERROR ',e
@@ -49,14 +44,9 @@ class OrderViewSet(viewsets.ModelViewSet):
         
         #Si La moveremos a Done checar que todo se pueda y restar         
         if order.status != DONE and STATUS_CODES[request.data['status']]==DONE:
-            possible = True
-            for oi in OrderItem.objects.filter(order=order): possible&=oi.amount<=oi.item.amount
-            if possible: #Prev was to check that we can pass it
-                order.statis = DONE
-                for oi in OrderItem.objects.filter(order=order): 
-                    #Aqui deberia de restar amount del almacen
-                    print oi.item
-
+            #Checar que haya suficiente en stock para poder pasarla a DONE
+            if False:
+                pass
             else:
                 return Response({'msg':"Couldn't complete requested amounts"})
 
@@ -68,7 +58,9 @@ class OrderViewSet(viewsets.ModelViewSet):
 
 
             
-''' #JSON EXAMPLE FOR CREATE -> POST
+''' 
+#JSON EXAMPLE FOR CREATE -> POST
+
 {
     "requester": "00287b5d-4d22-4ef5-8918-2551bf3b2efe",
     "items": [
@@ -89,4 +81,11 @@ class OrderViewSet(viewsets.ModelViewSet):
 
     ]
 }
+
+#Example de partial_update
+
+{
+    "status": "Delivered"
+}
+
 '''
