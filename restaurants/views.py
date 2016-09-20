@@ -27,10 +27,13 @@ class OrderViewSet(viewsets.ModelViewSet):
         restaurant = get_object_or_404(Restaurant,pk=request.data['requester'])
         order = Order.objects.create(requester=restaurant)
         try:
+            #total = 0
             for i in request.data['items']:
                 item = Resource.objects.get( id=i['item']['id'] )
                 oi = OrderItem(order=order,amount=i['amount'],item=item) 
-                oi.save()   
+                #total+=i['amount']*oi.item.price/1000
+                oi.save()
+            #order.total = total   
         except:
             order.delete()
             return Response({'msg':'Could not find some requested items, try again'})
