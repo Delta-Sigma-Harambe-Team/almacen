@@ -5,6 +5,7 @@ from .models import *
 from products.models import Resource
 from .serializers import OrderSerializer
 from pusher import Pusher
+from decimal import Decimal
 
 def send_push_notification(message,channel='channel_almacen',event='new_petition'):
     Pusher(app_id='244790',key='5b507c0f890e03302c2c',secret='990ad909a2a0fb83e15c',ssl=True).\
@@ -23,21 +24,22 @@ class OrderViewSet(viewsets.ModelViewSet):
         instance = serializer.save() #author=self.request.user)
         return super(OrderViewSet, self).perform_create(serializer)
 
-    def create(self, request): #Este es en /orders/ POST
+    def create(self, request): #Este es en /orders/ POST, Crear ordenes solo servira bien desde aqui
         restaurant = get_object_or_404(Restaurant,pk=request.data['requester'])
         order = Order.objects.create(requester=restaurant)
         try:
-            #total = 0
+            total = 0
             for i in request.data['items']:
                 item = Resource.objects.get( id=i['item']['id'] )
                 oi = OrderItem(order=order,amount=i['amount'],item=item) 
-                #total+=i['amount']*oi.item.price/1000
+                total+= Decimal(i['amount'])* oi.item.price/Decimal(1000.00)
                 oi.save()
-            #order.total = total   
-        except:
+            order.amount = total
+            order.save() 
+        except Exception as e:
             order.delete()
-            return Response({'msg':'Could not find some requested items, try again'})
-
+            print 'ERROR ',e
+            return Response({'error':e.message})
         serializer = self.serializer_class(order)
         send_push_notification(restaurant.name)
         return Response(serializer.data)
