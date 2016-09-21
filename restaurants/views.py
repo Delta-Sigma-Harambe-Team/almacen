@@ -28,7 +28,7 @@ class OrderViewSet(viewsets.ModelViewSet):
         order = Order.objects.create(requester=restaurant)
         try:
             for i in request.data['items']:
-                item = Resource.objects.get( id=i['item']['id'] )
+                item = Resource.objects.get( id=i['item']['id'] ) #Si no existe el item
                 oi = OrderItem(order=order,amount=i['amount'],item=item) 
                 oi.save()
         except Exception as e:
@@ -39,16 +39,12 @@ class OrderViewSet(viewsets.ModelViewSet):
         send_push_notification(restaurant.name)
         return Response(serializer.data)
 
-    def partial_update(self, request, pk=None): #Que solo sirva para cambiar el estado de la orden
+    def partial_update(self, request, pk=None): 
         order = get_object_or_404(Order,pk=pk)
         
-        #Si La moveremos a Done checar que todo se pueda y restar         
-        if order.status != DONE and STATUS_CODES[request.data['status']]==DONE:
-            #Checar que haya suficiente en stock para poder pasarla a DONE
-            if False:
-                pass
-            else:
-                return Response({'msg':"Couldn't complete requested amounts"})
+        if request.data['status'] in STATUS_CODES: #El pre_save validara que se pueda y restara de almacen
+            order.status = STATUS_CODES[request.data['status']]
+            order.save()
 
         serializer = self.serializer_class(order)
         return Response(serializer.data)

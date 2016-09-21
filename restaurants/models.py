@@ -45,7 +45,30 @@ class OrderItem(models.Model):
     def __unicode__(self):
         return '%s %s %s'%(self.order,self.item, self.amount)
 
-#FALTA CUANDO SE HACE UN UPDATE DE AMOUNT
+#FALTA CUANDO SE HACE UN UPDATE DE Cantidad de gramos Que se refleje en costo de la orden
+#Cuando se hace un Update en costo del producto que se refleje en las orderItems
+
+#Falta ponerle un trigger a resources referente a la fecha de caducidad
+#Cuando sea eliminado un resource deberia avisarle a las ordenes?
+
+@receiver(pre_save,sender=Order) 
+def PreSave_Order(sender,instance,*args, **kwargs):
+    if instance.id: #Si ya existe checar si cambio el status
+        prev_instance = Order.objects.get(id=instance.id)
+        if prev_instance.status==DONE:raise ValueError("Can't change order from delivered")
+        if instance.status==DONE:
+            possible = True
+            items_in_order = OrderItem.objects.filter(order=prev_instance)
+            for oi in items_in_order: #Iterar sobre items de orden y validar que hay en stock
+                possible&=oi.item.amount>=oi.amount 
+            if possible:
+                for oi in items_in_order:
+                    i = oi.item
+                    i.amount -= oi.amount
+                    i.save()
+            else:
+                raise ValueError("Can't complete order, not enough of requested items in stock")
+
 @receiver(post_save,sender=OrderItem) 
 def AfterSave_OrderItem(sender, instance, *args, **kwargs):
     if kwargs['created']:
