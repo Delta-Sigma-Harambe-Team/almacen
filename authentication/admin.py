@@ -2,19 +2,22 @@ from django.contrib.auth.models import Group
 from django.contrib import admin
 from .models import Account
 # Register your models here.
-from django.contrib.auth.models import Group
 admin.site.unregister(Group)
-class AdminGroups(Group):
+
+class AdminAccount(Account):
     class Meta:
         proxy = True    
-        verbose_name = "Group"
-        verbose_name_plural = "Groups"
-# in admin.py
-admin.site.register(AdminGroups)
+        app_label='auth'
+        verbose_name = "Account"
+        verbose_name_plural = "Accounts"
 
-@admin.register(Account)
-class AdminAccount(admin.ModelAdmin):
+@admin.register(Group)
+class AdminGroup(admin.ModelAdmin):
+    icon = '<i class="material-icons">lock</i>'
+
+@admin.register(AdminAccount)
+class AAC(admin.ModelAdmin):
+    icon = '<i class="material-icons">person</i>'
     list_display = ('username', 'email','first_name','last_name', 'is_admin',\
         'created_at','updated_at')
     list_filter = ('username','email')
-
