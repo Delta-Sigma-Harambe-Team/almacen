@@ -40,10 +40,10 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'rest_framework',
     'compressor',
-    'authentication',
-    'posts',
-    'products',
-    'restaurants',
+    'authentication.apps.AuthenticationConfig',
+    'products.apps.ProductsConfig',
+    'posts.apps.PostsConfig',
+    'restaurants.apps.RestaurantsConfig',
 )
 
 MIDDLEWARE_CLASSES = (
