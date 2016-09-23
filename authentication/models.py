@@ -1,4 +1,4 @@
-from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import AbstractBaseUser,PermissionsMixin
 from django.db import models
 from django.contrib.auth.models import BaseUserManager
 
@@ -28,7 +28,7 @@ class AccountManager(BaseUserManager):
 
         return account
 
-class Account(AbstractBaseUser):
+class Account(AbstractBaseUser,PermissionsMixin):
     email = models.EmailField(unique=True)
     username = models.CharField(max_length=40, unique=True)
 
@@ -45,14 +45,15 @@ class Account(AbstractBaseUser):
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
-
+    '''
     @property
     def is_superuser(self):
         return self.is_admin
-
+    '''
     @property
     def is_staff(self):
         return self.is_admin
+    
     
     def has_perm(self, perm, obj=None):
         return self.is_admin
