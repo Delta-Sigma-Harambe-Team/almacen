@@ -15,6 +15,7 @@ class AdminOrderItem(admin.ModelAdmin):
 class AdminRestaurant(admin.ModelAdmin):
     icon = '<i class="material-icons">store</i>'
     list_display = ('name','address', 'created_at','updated_at')
+    search_fields = ('name','address')
     list_filter = ('name',)
 
 @admin.register(Order)
@@ -22,4 +23,5 @@ class AdminOrder(admin.ModelAdmin):
     icon = '<i class="material-icons">content_paste</i>'
     list_display = ('requester','status' ,'created_at','updated_at')
     list_filter = ('requester',)
+    readonly_fields=('amount',)
     inlines = (TermInlineAdmin,)
