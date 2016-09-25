@@ -25,3 +25,4 @@ class AdminOrder(admin.ModelAdmin):
     list_filter = ('requester',)
     readonly_fields=('amount',)
     inlines = (TermInlineAdmin,)
+    
