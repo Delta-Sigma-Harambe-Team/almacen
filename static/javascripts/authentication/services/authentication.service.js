@@ -126,7 +126,9 @@
      * @returns {undefined}
      * @memberOf thinkster.authentication.services.Authentication
      */
-    function setAuthenticatedAccount(account) {
+    function setAuthenticatedAccount(account) 
+    {
+      //alert(JSON.stringify(account));
       $cookies.authenticatedAccount = JSON.stringify(account);
     }
     /**
