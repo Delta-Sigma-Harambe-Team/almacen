@@ -20,6 +20,10 @@ class OrderViewSet(viewsets.ModelViewSet):
         return super(OrderViewSet, self).perform_create(serializer)
 
     def create(self, request): #Este es en /orders/ POST, Crear ordenes solo servira bien desde aqui
+        print request.__dict__
+        for key in request.__dict__ :
+            print key,' : ',request.__dict__[key]
+
         restaurant = get_object_or_404(Restaurant,pk=request.data['requester'])
         order = Order.objects.create(requester=restaurant)
         try:
@@ -51,10 +55,11 @@ class OrderViewSet(viewsets.ModelViewSet):
 
             
 ''' 
+#http://localhost:8000/api/v1/orders/
 #JSON EXAMPLE FOR CREATE -> POST
 
 {
-    "requester": "00287b5d-4d22-4ef5-8918-2551bf3b2efe",
+    "requester": "0179b99a-21a4-4601-9a57-ebf3aefd8754",
     "items": [
         {
             "amount": "1000.00",
