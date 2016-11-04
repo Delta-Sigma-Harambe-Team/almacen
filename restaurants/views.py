@@ -20,9 +20,11 @@ class OrderViewSet(viewsets.ModelViewSet):
         return super(OrderViewSet, self).perform_create(serializer)
 
     def create(self, request): #Este es en /orders/ POST, Crear ordenes solo servira bien desde aqui
-        print request.__dict__
-        for key in request.__dict__ :
-            print key,' : ',request.__dict__[key]
+        #print request.__dict__
+        #for key in request.__dict__ : print key,' : ',request.__dict__[key]
+
+        print request.__dict__['_request']
+        print request.__dict__['authenticators']
 
         restaurant = get_object_or_404(Restaurant,pk=request.data['requester'])
         order = Order.objects.create(requester=restaurant)

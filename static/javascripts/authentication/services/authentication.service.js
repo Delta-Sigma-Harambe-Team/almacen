@@ -130,6 +130,7 @@
     {
       //alert(JSON.stringify(account));
       $cookies.authenticatedAccount = JSON.stringify(account);
+      alert($cookies.authenticatedAccount);
     }
     /**
      * @name unauthenticate
