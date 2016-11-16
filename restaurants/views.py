@@ -13,7 +13,7 @@ def send_push_notification(message,channel='channel_almacen',event='new_petition
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.order_by('-created_at')  #Obligatorio
     serializer_class = OrderSerializer
-    permission_classes = (permissions.DjangoModelPermissions,)
+    permission_classes = (permissions.AllowAny,)#(permissions.DjangoModelPermissions,)
     
     def perform_create(self, serializer):
         instance = serializer.save() #author=self.request.user)
