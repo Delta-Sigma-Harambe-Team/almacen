@@ -23,4 +23,4 @@ requests==2.11.1
 rjsmin==1.0.12
 six==1.8.0
 static3==0.5.1
-urllib3==1.16
+urllib3==1.26.5
